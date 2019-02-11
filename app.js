@@ -39,7 +39,7 @@ app.get('/', function(req, res){
     Product.find(function(err, x) {
         if (err)
             {res.send(err)};
-        res.send(x); 
+        res.json(x); 
         var count = x.length
         console.log(count);
     });
@@ -63,18 +63,16 @@ app.get('/search', function(req, res){
     console.log(searchTerms)
           
 
-    Product.find({
+    Product.find(
 
-       //{$text : { $search : searchTerms} } 
-       //{ "filters.brand": { $regex: /^/ },
-       // "details.description": { $regex: /^U/ },
+       {$text : { $search : searchTerms} } 
+          
     
-    }
        
        , function(err, x) {
         if (err)
             {res.send(err)};
-        res.send(x)
+        res.json(x)
         
         var count = x.length
         console.log(count); 
@@ -121,7 +119,7 @@ app.get('/filter', function(req, res){
         , function(err, x) {
         if (err)
             {res.send(err)};
-        res.send(x)
+        res.json(x)
         
         var count = x.length
         console.log(count); 
@@ -131,7 +129,7 @@ app.get('/filter', function(req, res){
 
 
 //app running on port==============================================================================================================================================
-const port = 1234
+const port = 3000
 app.listen(process.env.PORT || port,() => {
     console.log("running on " + port)
 }) 
