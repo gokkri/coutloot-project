@@ -47,7 +47,7 @@ app.get('/', function(req, res){
 
 //search route=================================================================================================================================================
 
-app.get('/products', function(req, res){
+app.get('/search', function(req, res){
         
     var pTitle = req.query.title;
     var pDescription = req.query.description;
@@ -62,24 +62,76 @@ app.get('/products', function(req, res){
     console.log(searchTerms)
           
 
-    Product.find(
-       {$text : { $search : searchTerms} } 
-    , function(err, x) {
+    Product.find({
+
+       //{$text : { $search : searchTerms} } 
+       //{ "filters.brand": { $regex: /^/ },
+       // "details.description": { $regex: /^U/ },
+    
+    }
+       
+       , function(err, x) {
         if (err)
             {res.send(err)};
         res.send(x)
         
         var count = x.length
         console.log(count); 
-    })
+    }).sort( { "filters.price" : 1 } )
+})
+
+
+//filter route=================================================================================================================================================
+
+app.get('/filter', function(req, res){
+
+// filter by Categoryname, Brand, Condition, Material, Color, Flaw, Price, Size.
+ 
+    var pCat = req.query.cat;
+    var pCondition = req.query.condition;
+    var pBrand = req.query.brand;
+    var pMaterial = req.query.material;
+    var pColor = req.query.color;
+    var pFlaw = req.query.flaw;
+    var pSize = req.query.size;
+    var upperPrice = req.query.upper;
+    
+
+    var mamamia = [];
+
+            if(pCat){mamamia.push({"category.categoryName": pCat})};
+            if(pCondition){mamamia.push({"filters.condition": pCondition})};
+            if(pBrand){mamamia.push({"filters.brand": pBrand})};
+            if(pMaterial){mamamia.push({"filters.material": pMaterial})};
+            if(pColor){mamamia.push({"filters.color": pColor})};
+            if(pFlaw){mamamia.push({"filters.flaw": pFlaw})};
+            if(pSize){mamamia.push({"filters.size":{$in: pSize}})};
+            if(upperPrice){mamamia.push({"filters.price":{ $lt : upperPrice } })};
+            //mamamia.push({$sort:{ "filters.price": 1}});
+
+
+     console.log(mamamia)
+          
+
+    Product.find({
+        
+        $and:mamamia
+
+        }
+        , function(err, x) {
+        if (err)
+            {res.send(err)};
+        res.send(x)
+        
+        var count = x.length
+        console.log(count); 
+    }).sort( { "filters.price" : 1 } )
 })
 
 
 
-
-
 //app running on port==============================================================================================================================================
-const port = 3725
+const port = 1234
 app.listen(process.env.PORT || port,() => {
     console.log("running on " + port)
 }) 
