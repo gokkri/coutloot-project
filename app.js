@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config();
 const fetch = require('node-fetch');
 const express = require('express');
 const fs =require('fs');
@@ -8,7 +9,7 @@ const Product  = require('./models/product');
 
 
 const  mongoose    = require("mongoose");
-const mongoDB = "mongodb://gokkri:hello123@ds127825.mlab.com:27825/coutloot"
+const mongoDB = process.env.url;
 mongoose.connect(mongoDB, {useCreateIndex: true, useNewUrlParser: true, autoIndex: true}).catch((err) => {console.log(err)})
 
 
@@ -107,7 +108,6 @@ app.get('/filter', function(req, res){
             if(pFlaw){mamamia.push({"filters.flaw": pFlaw})};
             if(pSize){mamamia.push({"filters.size":{$in: pSize}})};
             if(upperPrice){mamamia.push({"filters.price":{ $lt : upperPrice } })};
-            //mamamia.push({$sort:{ "filters.price": 1}});
 
 
      console.log(mamamia)
